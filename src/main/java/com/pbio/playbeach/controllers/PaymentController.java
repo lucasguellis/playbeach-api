@@ -2,13 +2,11 @@ package com.pbio.playbeach.controllers;
 
 import com.google.gson.JsonSyntaxException;
 import com.pbio.playbeach.entities.Category;
-import com.pbio.playbeach.entities.User;
 import com.pbio.playbeach.entities.dto.PaymentRequestDTO;
 import com.pbio.playbeach.entities.dto.PaymentResponseDTO;
 import com.pbio.playbeach.repositories.TmpUserCategoryRepository;
 import com.pbio.playbeach.services.CategoryService;
 import com.pbio.playbeach.services.PaymentService;
-import com.pbio.playbeach.services.UserService;
 import com.pbio.playbeach.util.CustomerUtil;
 import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
@@ -16,6 +14,7 @@ import com.stripe.model.*;
 import com.stripe.net.Webhook;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +31,15 @@ import java.util.stream.Collectors;
 public class PaymentController {
     private final TmpUserCategoryRepository tmpUserCategoryRepository;
 
+    @Value("${stripe.publishable-key}")
+    private String PUBLISHABLE_KEY;
+
+    @Value("${stripe.secret-key}")
+    private String SECRET_KEY;
+
+    @Value("${stripe.webhook-secret}")
+    private String WEBHOOK_SECRET;
+
     private final CategoryService categoryService;
     private final PaymentService paymentService;
 
@@ -42,7 +50,7 @@ public class PaymentController {
         this.tmpUserCategoryRepository = tmpUserCategoryRepository;
     }
 
-    @PostMapping("/integrated")
+    @PostMapping("/")
     PaymentResponseDTO integratedCheckout(@RequestBody PaymentRequestDTO paymentRequestDTO) throws Exception {
 
         Stripe.apiKey = SECRET_KEY;
