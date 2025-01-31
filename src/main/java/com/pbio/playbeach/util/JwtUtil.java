@@ -34,9 +34,8 @@ public class JwtUtil {
 
     }
 
-    public boolean isTokenValid(String token, String username) {
-        String subject = getSubject(token);
-        return subject.equals(username) && !isTokenExpired(token);
+    public boolean isTokenValid(String token) {
+        return !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
